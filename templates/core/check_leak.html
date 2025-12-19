@@ -18,7 +18,7 @@
         <!-- Форма проверки -->
         <div class="card shadow mb-4">
             <div class="card-body">
-                <form method="post" action="{% url 'core:check_leak' %}">
+                <form method="post" action="{% url 'core:check_leak' %}" id="password-check-form">
                     {% csrf_token %}
                     
                     <div class="mb-4">
@@ -26,11 +26,11 @@
                             <i class="bi bi-key"></i> Введите пароль для проверки:
                         </label>
                         <input type="password" 
-                               class="form-control form-control-lg" 
-                               id="password" 
-                               name="password" 
-                               placeholder="Введите ваш пароль"
-                               required>
+                            class="form-control form-control-lg" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Введите ваш пароль"
+                            required>
                         <div class="form-text mt-2">
                             Мы <strong>НИКОГДА</strong> не сохраняем ваши пароли. 
                             Проверка происходит безопасно через хеширование.
@@ -38,7 +38,7 @@
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg">
+                        <button type="submit" class="btn btn-primary btn-lg" id="check-button">
                             <i class="bi bi-search"></i> Проверить пароль
                         </button>
                         <div class="form-text text-center mt-2">
