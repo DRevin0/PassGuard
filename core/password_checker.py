@@ -6,10 +6,6 @@ def check_password_hibp(password: str) -> dict:
     sha1_hash = hashlib.sha1(password.encode('utf-8')).hexdigest().upper()
     prefix, suffix = sha1_hash[:5], sha1_hash[5:]
 
-    print(f"[DEBUG] Проверка пароля: '{password}'")
-    print(f"[DEBUG] Полный хеш: {sha1_hash}")
-    print(f"[DEBUG] Префикс: {prefix}, Суффикс: {suffix}")
-
     try:
         response = requests.get(
             f"https://api.pwnedpasswords.com/range/{prefix}",
@@ -30,26 +26,17 @@ def check_password_hibp(password: str) -> dict:
             response.raise_for_status()
 
         lines = response.text.splitlines()
-        print(f"[DEBUG] Получено строк от API: {len(lines)}")
-
-        for i, line in enumerate(lines[:3]):
-            print(f"[DEBUG] Строка {i}: {line}")
 
         for line in lines:
             hash_suffix, count = line.split(':')
             if hash_suffix == suffix:
-                print(f"[DEBUG] НАЙДЕНО СОВПАДЕНИЕ: {hash_suffix} = {suffix}")
                 return int(count)
-        print(f"[DEBUG] Совпадений не найдено")
         return 0
     except requests.RequestException:
         return None
     
 def check_password_leak(password: str) -> dict:
-
-    print(f"[DEBUG] === Начало проверки для '{password}' ===")
     result = check_password_hibp(password)
-    print(f"[DEBUG] Результат check_password_hibp: {result}")
     
     if result is None:
         return {
