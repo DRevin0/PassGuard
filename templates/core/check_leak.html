@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}PassGuard - Проверка утечки пароля{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- Заголовок -->
+        <div class="text-center mb-5">
+            <h1 class="mb-3">
+                <i class="bi bi-search text-primary"></i> Проверка пароля на утечку
+            </h1>
+            <p class="lead text-muted">
+                Проверьте, был ли ваш пароль в публичных утечках данных
+            </p>
+        </div>
+
+        <!-- Форма проверки -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form method="post" action="{% url 'core:check_leak' %}">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-bold">
+                            <i class="bi bi-key"></i> Введите пароль для проверки:
+                        </label>
+                        <input type="password" 
+                               class="form-control form-control-lg" 
+                               id="password" 
+                               name="password" 
+                               placeholder="Введите ваш пароль"
+                               required>
+                        <div class="form-text mt-2">
+                            <i class="bi bi-shield-check"></i>
+                            Мы <strong>НИКОГДА</strong> не сохраняем ваши пароли. 
+                            Проверка происходит безопасно через хеширование.
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-search"></i> Проверить пароль
+                        </button>
+                        <div class="form-text text-center mt-2">
+                            Нажмите Enter или кликните на кнопку
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Блок с результатом -->
+        {% if result %}
+        <div class="card shadow mt-4 border-{% if result.is_leaked %}danger{% else %}success{% endif %}">
+            <div class="card-body">
+                <h4 class="card-title">
+                    <i class="bi bi-{% if result.is_leaked %}exclamation-triangle text-danger{% else %}shield-check text-success{% endif %}"></i>
+                    Результат проверки
+                </h4>
+                
+                <div class="alert alert-{% if result.is_leaked %}danger{% else %}success{% endif %}">
+                    <h5 class="alert-heading">
+                        {% if result.is_leaked %}
+                            ⚠️ Пароль найден в утечках!
+                        {% else %}
+                            ✅ Пароль безопасен
+                        {% endif %}
+                    </h5>
+                    
+                    <div class="mt-3">
+                        <p><strong>Статус:</strong> {{ result.message }}</p>
+                        {% if result.is_leaked %}
+                            <p><strong>Найден в утечках:</strong> {{ result.leak_count }} раз</p>
+                            <hr>
+                            <p class="mb-0">
+                                <i class="bi bi-lightbulb"></i>
+                                <strong>Рекомендация:</strong> Немедленно замените этот пароль!
+                            </p>
+                        {% else %}
+                            <hr>
+                            <p class="mb-0">
+                                <i class="bi bi-lightbulb"></i>
+                                <strong>Рекомендация:</strong> Продолжайте использовать этот пароль или обновите его для большей безопасности.
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Кнопка для новой проверки -->
+                <div class="text-center mt-3">
+                    <a href="{% url 'core:check_leak' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-arrow-repeat"></i> Проверить другой пароль
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Информационный блок -->
+        <div class="card shadow mt-5 border-info">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-info-circle text-info"></i> Как работает проверка?
+                </h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <i class="bi bi-1-circle text-primary"></i>
+                        <strong>Безопасность:</strong> Ваш пароль преобразуется в хеш (SHA-1/SHA-256)
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-2-circle text-primary"></i>
+                        <strong>Проверка:</strong> Хеш проверяется через базы данных утечек
+                    </li>
+                    <li class="list-group-item">
+                        <i class="bi bi-3-circle text-primary"></i>
+                        <strong>Результат:</strong> Вы получаете информацию о найденных утечках
+                    </li>
+                </ul>
+                <div class="alert alert-light mt-3">
+                    <small>
+                        <i class="bi bi-shield-exclamation"></i>
+                        <strong>Важно:</strong> Для реальной проверки потребуется подключение к API 
+                        (например, HaveIBeenPwned) или использование локальной базы данных.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
