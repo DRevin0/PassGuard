@@ -43,9 +43,9 @@
                         <p class="card-text">
                             Оценим надежность вашего пароля по 10-балльной шкале
                         </p>
-                        <div class="mt-3">
-                            <span class="badge bg-warning text-dark">Скоро</span>
-                        </div>
+                        <a href="{% url 'core:check_strength' %}" class="btn btn-success">
+                            <i class="bi bi-graph-up"></i> Начать анализ
+                        </a>
                     </div>
                 </div>
             </div>
