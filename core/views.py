@@ -76,4 +76,4 @@ def generate_password_view(request):
         'use_lowercase': use_lowercase,
     }
     
-    return render(request, 'core/generate_password.html', context)
+    return render (request, 'core/password_generator.html', context)
