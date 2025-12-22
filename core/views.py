@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .password_checker import check_password_leak
 from .password_analyser import check_password_strength
+from .password_generator import generate_password
 
 def home(request):
     return render(request, 'core/home.html')
