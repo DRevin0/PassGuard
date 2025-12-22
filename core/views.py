@@ -31,3 +31,48 @@ def check_strength(request):
             context['result'] = result
 
     return render(request, 'core/check_strength.html', context)
+
+def generate_password_view(request):
+    """
+    Страница генерации паролей
+    """
+    generated_password = ""
+    length = 12
+    use_digits = True
+    use_special = True
+    use_uppercase = True
+    use_lowercase = True
+    
+    if request.method == 'POST':
+        try:
+            length = int(request.POST.get('length', 12))
+
+            use_digits = 'use_digits' in request.POST
+            use_special = 'use_special' in request.POST
+            use_uppercase = 'use_uppercase' in request.POST
+            use_lowercase = 'use_lowercase' in request.POST
+            
+            # Генерируем пароль
+            generated_password = generate_password(
+                length=length,
+                use_digits=use_digits,
+                use_special=use_special,
+                use_uppercase=use_uppercase,
+                use_lowercase=use_lowercase
+            )
+        except ValueError as e:
+            generated_password = f"Ошибка: {e}"
+        except Exception as e:
+            generated_password = f"Ошибка при генерации: {str(e)}"
+    
+    # Контекст для передачи в шаблон
+    context = {
+        'generated_password': generated_password,
+        'default_length': length,
+        'use_digits': use_digits,
+        'use_special': use_special,
+        'use_uppercase': use_uppercase,
+        'use_lowercase': use_lowercase,
+    }
+    
+    return render(request, 'core/generate_password.html', context)
